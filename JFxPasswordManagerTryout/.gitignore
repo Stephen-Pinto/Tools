@@ -1,0 +1,6 @@
+out
+.idea
+*.jar
+*.war
+*.ear
+.gradle

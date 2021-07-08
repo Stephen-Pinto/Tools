@@ -1,0 +1,19 @@
+.text-field {
+    -fx-background-color: -fx-text-box-border, -fx-background;
+    -fx-background-insets: 0, 0 0 1 0 ;
+    -fx-background-radius: 0 ;
+}
+
+.text-field:focused {
+    -fx-background-color: -fx-focus-color, -fx-background ;
+}
+
+/*.jfxdate-picker {
+    -fx-font-size: 20;
+}*/
+
+.jfxdate-picker .text-field{
+    -fx-font-size: 20;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0, 0 0 0 0 ;
+}

@@ -1,0 +1,59 @@
+# CMakeList.txt : CMake project for DuplicateSniffer, include source and define
+# project specific logic here.
+#
+cmake_minimum_required (VERSION 3.11)
+
+#boost library setup
+#project(boostAndCMake)
+
+set(BOOST_ROOT "C:\\Libraries\\boost_1_64_0")
+set(BOOST_LIBRARYDIR "C:\\Libraries\\boost_1_64_0\\lib64-msvc-14.1")
+set(DUPLICATE_SNIFFER_ROOT ".")
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+    set(BOOST_STATIC_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
+    set(BOOST_STATIC_FILESYSTEM_LIBRARY ${Boost_FILESYSTEM_LIBRARY_DEBUG})
+else()
+    set(BOOST_STATIC_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
+    set(BOOST_STATIC_FILESYSTEM_LIBRARY ${Boost_FILESYSTEM_LIBRARY_RELEASE})
+endif()
+
+#set(LIBS_TO_LINK ${BOOST_STATIC_SYSTEM_LIBRARY} ${BOOST_STATIC_FILESYSTEM_LIBRARY})
+
+#add_definitions(-DBOOST_ALL_NO_LIB )
+#add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+
+set(Boost_USE_STATIC_LIBS ON)
+#set(Boost_USE_MULTITHREADED ON)  
+#set(Boost_USE_STATIC_RUNTIME OFF) 
+#find_package(Boost REQUIRED COMPONENTS system) # header only libraries must not be added here
+#find_package(Boost 1.69 REQUIRED)
+find_package(Boost 1.64 COMPONENTS system filesystem program_options REQUIRED)
+
+# Add source to this project's executable.
+file(GLOB DuplicateSniffer_SRC
+    "*.h"
+    "*.cpp"
+)
+
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include/common ${CMAKE_CURRENT_SOURCE_DIR}/include/engine)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+#link_directories (${Boost_FILESYSTEM_LIBRARY})
+
+add_executable (DuplicateSniffer ${DuplicateSniffer_SRC})
+#target_link_libraries(DuplicateSniffer PUBLIC Boost::boost) 
+target_link_libraries(DuplicateSniffer Boost::boost Boost::filesystem)
+
+get_directory_property(_my_link_dirs LINK_DIRECTORIES)
+message(STATUS "_my_link_dirs = ${_my_link_dirs}")
+
+#target_include_directories(CMakeProject2 PUBLIC ${Boost_INCLUDE_DIRS}) 
+#target_link_libraries(CMakeProject2 ${Boost_LIBRARIES})
+
+# TODO: Add tests and install targets if needed.
+
+#set_property (TARGET DuplicateSniffer PROPERTY #PUBLIC 
+    # Enable C++17 standard compliance
+#    CXX_STANDARD 17
+#)

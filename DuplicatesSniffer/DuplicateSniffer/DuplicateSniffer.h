@@ -1,4 +1,4 @@
-﻿// duplicate_sniffer.h : Include file for standard system include files,
+﻿// DuplicateSniffer.h : Include file for standard system include files,
 // or project specific include files.
 
 #pragma once

@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#define NOMINMAX
+#endif // _WIN32
 #include "pch.h"
 #include "CrcListGenerator.h"
 #include <boost/filesystem.hpp>
@@ -5,6 +8,7 @@
 #include <Windows.h>
 #include <boost/crc.hpp>
 #include <fstream>
+#include <oneapi/tbb.h>
 
 using namespace SyncServ;
 
@@ -41,7 +45,24 @@ void SyncServ::CrcListGenerator::GenerateCrcForFile(const FileInfo_SP& finfo)
 
 std::vector<FileInfo_SP> SyncServ::CrcListGenerator::GenerateCrcForDir(const std::string& dir)
 {
-	return std::vector<FileInfo_SP>();
+	using namespace oneapi::tbb;
+
+	auto list = GetFlatList(dir);
+
+	/*parallel_for(blocked_range<size_t>(0, list.size()),
+		[=](const blocked_range<size_t>& r) {
+			for (size_t i = r.begin(); i != r.end(); i++)
+				GenerateCrcForFile(list[i]);
+		}
+	);*/
+
+	parallel_for(size_t(0), list.size(),
+		[=](size_t i) {
+			GenerateCrcForFile(list[i]);
+		}
+	);
+
+	return list;
 }
 
 std::vector<FileInfo_SP> CrcListGenerator::GetFlatList(const std::filesystem::path& dir)

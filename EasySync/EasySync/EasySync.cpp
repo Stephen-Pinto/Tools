@@ -9,11 +9,17 @@ int main()
 {
     /*std::cout << "Hello World!\n";*/
     CrcListGenerator gen;
-    auto list = gen.GetFlatList("D:\\Books\\Pdfs\\C#");
-    for (auto item : list)
+    //auto list = gen.GetFlatList("E:\\Bookstore\\C++");
+    /*for (auto item : list)
     {
         gen.GenerateCrcForFile(item);
         std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;        
+    }*/
+
+    auto list = gen.GenerateCrcForDir("E:\\Bookstore");
+    for (auto item : list)
+    {
+        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
     }
 }
 

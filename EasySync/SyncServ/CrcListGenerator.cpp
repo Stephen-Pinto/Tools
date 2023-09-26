@@ -49,18 +49,25 @@ std::vector<FileInfo_SP> SyncServ::CrcListGenerator::GenerateCrcForDir(const std
 
 	auto list = GetFlatList(dir);
 
-	/*parallel_for(blocked_range<size_t>(0, list.size()),
-		[=](const blocked_range<size_t>& r) {
-			for (size_t i = r.begin(); i != r.end(); i++)
-				GenerateCrcForFile(list[i]);
-		}
-	);*/
-
 	parallel_for(size_t(0), list.size(),
 		[=](size_t i) {
 			GenerateCrcForFile(list[i]);
 		}
 	);
+
+	return list;
+}
+
+std::vector<FileInfo_SP> SyncServ::CrcListGenerator::GenerateCrcForDir2(const std::string& dir)
+{
+	using namespace oneapi::tbb;
+
+	auto list = GetFlatList(dir);
+
+	for (int i = 0; i < list.size(); i++)
+	{
+		GenerateCrcForFile(list[i]);
+	}
 
 	return list;
 }

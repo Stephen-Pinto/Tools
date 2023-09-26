@@ -130,11 +130,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EasySync.cpp" />
+    <ClCompile Include="TestOne.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SyncServ\SyncServ.vcxproj">
       <Project>{6e60e34c-eb18-464e-8313-0624f593f2d9}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,26 +1,12 @@
 // EasySync.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include "pch.h"
-#include <iostream>
-#include "CrcListGenerator.h"
-using namespace SyncServ;
+#include "TestOne.h"
 
 int main()
 {
     /*std::cout << "Hello World!\n";*/
-    CrcListGenerator gen;
-    //auto list = gen.GetFlatList("E:\\Bookstore\\C++");
-    /*for (auto item : list)
-    {
-        gen.GenerateCrcForFile(item);
-        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;        
-    }*/
-
-    auto list = gen.GenerateCrcForDir("E:\\Bookstore");
-    for (auto item : list)
-    {
-        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
-    }
+    TestMethodTwo();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

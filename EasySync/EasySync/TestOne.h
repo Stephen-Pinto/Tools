@@ -8,12 +8,28 @@
 using namespace SyncServ;
 using namespace std::chrono;
 
-#define DIR_PATH "D:\\Temporary\\Pdfs"
+#define DIR_PATH "H:\\OneBox\\PolandPhonePics"
 
-inline void TestMethodOne()
+//inline void TestMethodOne()
+//{
+//    CrcListGenerator gen;
+//    auto list = gen.GenerateCrcForDir2(DIR_PATH);
+//    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+//
+//    for (auto item : list)
+//    {
+//        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
+//    }
+//
+//    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+//    auto tm_duration = duration_cast<microseconds>(t2 - t1).count();
+//    std::cout << "Time elapsed: " << tm_duration << std::endl;
+//}
+
+inline void TestMethodTwo()
 {
     CrcListGenerator gen;
-    auto list = gen.GenerateCrcForDir2(DIR_PATH);
+    auto list = gen.GenerateCrcForDir(DIR_PATH);
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     for (auto item : list)
@@ -26,15 +42,21 @@ inline void TestMethodOne()
     std::cout << "Time elapsed: " << tm_duration << std::endl;
 }
 
-inline void TestMethodTwo()
+inline void TestMethodThree()
 {
     CrcListGenerator gen;
-    auto list = gen.GenerateCrcForDir(DIR_PATH);
+    DuplicateFileList list;
+    size_t count = gen.GenerateDuplicateList(list, DIR_PATH);
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-    for (auto item : list)
+    for(auto kvp : list)
     {
-        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
+        std::cout << "With CRC: " << kvp.first << ":" << std::endl;
+
+        for (auto item : kvp.second)
+        {
+            std::cout << ">> " << item->Crc << std::endl;
+        }
     }
 
     high_resolution_clock::time_point t2 = high_resolution_clock::now();

@@ -1,14 +1,12 @@
 #pragma once
 
 #include "FileInfo.h"
+#include <map>
 
 namespace SyncServ
 {
-	struct DuplicateFileList
+	struct DuplicateFileList : public std::map<uint, std::vector<FileInfo_SP>>
 	{
-	public:
-		int Crc = 0;
-		std::vector<FileInfo_SP> FileList;
 	};
 
 	typedef std::shared_ptr<DuplicateFileList> DuplicateFileList_SP;

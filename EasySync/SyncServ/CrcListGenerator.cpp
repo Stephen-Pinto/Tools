@@ -13,10 +13,10 @@
 using namespace SyncServ;
 
 #ifndef PRIVATE_BUFFER_SIZE
-#define PRIVATE_BUFFER_SIZE  1024
+#define PRIVATE_BUFFER_SIZE  2048
 #endif
 
-std::streamsize const  buffer_size = PRIVATE_BUFFER_SIZE;
+std::streamsize const buffer_size = PRIVATE_BUFFER_SIZE;
 
 CrcListGenerator::CrcListGenerator()
 {
@@ -26,7 +26,12 @@ CrcListGenerator::~CrcListGenerator()
 {
 }
 
-FileInfo_SP SyncServ::CrcListGenerator::GenerateCrcForFile(const std::string& file)
+void CrcListGenerator::GenerateCrcForFile(const FileInfo_SP& finfo)
+{
+	finfo->Crc = CalculateCrc(finfo->Path);	
+}
+
+FileInfo_SP CrcListGenerator::GenerateCrcForFile(const std::string& file)
 {
 	auto path = std::filesystem::path(file);
 	FileInfo_SP finfo(new FileInfo());
@@ -38,38 +43,35 @@ FileInfo_SP SyncServ::CrcListGenerator::GenerateCrcForFile(const std::string& fi
 	return finfo;
 }
 
-void SyncServ::CrcListGenerator::GenerateCrcForFile(const FileInfo_SP& finfo)
-{
-	finfo->Crc = CalculateCrc(finfo->Path);	
-}
-
-std::vector<FileInfo_SP> SyncServ::CrcListGenerator::GenerateCrcForDir(const std::string& dir)
+std::vector<FileInfo_SP> CrcListGenerator::GenerateCrcForDir(const std::string& dir)
 {
 	using namespace oneapi::tbb;
 
 	auto list = GetFlatList(dir);
 
-	parallel_for(size_t(0), list.size(),
-		[=](size_t i) {
-			GenerateCrcForFile(list[i]);
-		}
-	);
+	task_group tsk_grp;
 
-	return list;
-}
-
-std::vector<FileInfo_SP> SyncServ::CrcListGenerator::GenerateCrcForDir2(const std::string& dir)
-{
-	using namespace oneapi::tbb;
-
-	auto list = GetFlatList(dir);
-
-	for (int i = 0; i < list.size(); i++)
+	for (auto item : list)
 	{
-		GenerateCrcForFile(list[i]);
+		tsk_grp.run([&] { GenerateCrcForFile(item); });
 	}
 
+	tsk_grp.wait();
 	return list;
+}
+
+size_t CrcListGenerator::GenerateDuplicateList(DuplicateFileList& duplicateList, const std::string& dir)
+{
+	auto list = GenerateCrcForDir(dir);
+	for (auto item : list)
+	{
+		if (!duplicateList.contains(item->Crc))
+			duplicateList.insert(item->Crc, {});
+		
+		duplicateList[item->Crc].push_back(item);
+	}
+
+	return duplicateList.size();
 }
 
 std::vector<FileInfo_SP> CrcListGenerator::GetFlatList(const std::filesystem::path& dir)
@@ -111,13 +113,13 @@ std::vector<FileInfo_SP> CrcListGenerator::GetFlatList(const std::filesystem::pa
 	return fileList;
 }
 
-void SyncServ::CrcListGenerator::ValidatePath(const std::filesystem::path& dir)
+void CrcListGenerator::ValidatePath(const std::filesystem::path& dir)
 {
 	if (dir.empty() || !std::filesystem::is_directory(dir) || !std::filesystem::exists(dir))
 		throw std::invalid_argument("Expected a valid directory");
 }
 
-uint SyncServ::CrcListGenerator::CalculateCrc(const std::string& file)
+uint CrcListGenerator::CalculateCrc(const std::string& file)
 {
 	boost::crc_32_type cc;
 	std::ifstream input_fstream(file, std::ios_base::binary);

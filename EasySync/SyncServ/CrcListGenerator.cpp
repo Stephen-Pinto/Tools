@@ -50,29 +50,28 @@ std::vector<FileInfo_SP> CrcListGenerator::GenerateCrcForDir(const std::string& 
 
 	auto list = GetFlatList(dir);
 
-	task_group tsk_grp;
+	task_group tskGrp;
 
-	for (auto item : list)
+	for (auto& item : list)
 	{
-		tsk_grp.run([&] 
+		tskGrp.run([&] 
 		{ 
 			GenerateCrcForFile(item); 
 		});
 	}
 
-	tsk_grp.wait();
+	tskGrp.wait();
 	return list;
 }
 
 size_t CrcListGenerator::GenerateDuplicateList(DuplicateFileList& duplicateList, const std::string& dir)
 {
 	auto list = GenerateCrcForDir(dir);
-	for (auto item : list)
+	for (auto& item : list)
 	{
 		if (duplicateList.find(item->Crc) == duplicateList.end())
 		{
-			std::pair<uint, std::vector<FileInfo_SP>> pair = std::make_pair(item->Crc, std::vector<FileInfo_SP>());
-			//duplicateList.insert(item->Crc, {});
+			std::pair<uint, std::vector<FileInfo_SP>> pair = std::make_pair(item->Crc, std::vector<FileInfo_SP>());			
 			duplicateList.insert(pair);
 		}
 		

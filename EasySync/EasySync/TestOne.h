@@ -51,12 +51,14 @@ inline void TestMethodThree()
 
     for(auto & [key, val] : list)
     {
-        std::cout << "With CRC: " << key << ":" << std::endl;
+        std::cout << "With CRC: " << key << ": [" << val.size() << "]" << std::endl;
 
         for (auto item : val)
         {
-            std::cout << ">> " << item->Crc << std::endl;
+            std::cout << ">> " << item->Path << std::endl;
         }
+
+        std::cout << std::endl;
     }
 
     high_resolution_clock::time_point t2 = high_resolution_clock::now();

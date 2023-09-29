@@ -9,6 +9,7 @@
 #include <boost/crc.hpp>
 #include <fstream>
 #include <oneapi/tbb.h>
+#include <iostream>
 
 using namespace SyncServ;
 
@@ -53,7 +54,10 @@ std::vector<FileInfo_SP> CrcListGenerator::GenerateCrcForDir(const std::string& 
 
 	for (auto item : list)
 	{
-		tsk_grp.run([&] { GenerateCrcForFile(item); });
+		tsk_grp.run([&] 
+		{ 
+			GenerateCrcForFile(item); 
+		});
 	}
 
 	tsk_grp.wait();
@@ -65,8 +69,12 @@ size_t CrcListGenerator::GenerateDuplicateList(DuplicateFileList& duplicateList,
 	auto list = GenerateCrcForDir(dir);
 	for (auto item : list)
 	{
-		if (!duplicateList.contains(item->Crc))
-			duplicateList.insert(item->Crc, {});
+		if (duplicateList.find(item->Crc) == duplicateList.end())
+		{
+			std::pair<uint, std::vector<FileInfo_SP>> pair = std::make_pair(item->Crc, std::vector<FileInfo_SP>());
+			//duplicateList.insert(item->Crc, {});
+			duplicateList.insert(pair);
+		}
 		
 		duplicateList[item->Crc].push_back(item);
 	}
@@ -99,10 +107,7 @@ std::vector<FileInfo_SP> CrcListGenerator::GetFlatList(const std::filesystem::pa
 			}
 			catch (std::exception& exp)
 			{
-				OutputDebugStringA(iter->path().string().c_str());
-				OutputDebugStringA("\n");
-				OutputDebugStringA(exp.what());
-				OutputDebugStringA("\n");
+				std::cerr << "Exception: " << exp.what() << std::endl;
 			}
 		}
 

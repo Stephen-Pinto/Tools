@@ -8,7 +8,7 @@
 using namespace SyncServ;
 using namespace std::chrono;
 
-#define DIR_PATH "H:\\OneBox\\PolandPhonePics"
+#define DIR_PATH "D:\\Temporary\\Pdfs"
 
 //inline void TestMethodOne()
 //{
@@ -49,11 +49,11 @@ inline void TestMethodThree()
     size_t count = gen.GenerateDuplicateList(list, DIR_PATH);
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-    for(auto kvp : list)
+    for(auto & [key, val] : list)
     {
-        std::cout << "With CRC: " << kvp.first << ":" << std::endl;
+        std::cout << "With CRC: " << key << ":" << std::endl;
 
-        for (auto item : kvp.second)
+        for (auto item : val)
         {
             std::cout << ">> " << item->Crc << std::endl;
         }

@@ -9,6 +9,10 @@ namespace SyncServ
 	{
 	};
 
+	struct DuplicateFileListItem : public std::pair<uint, std::vector<FileInfo_SP>>
+	{
+	};
+
 	typedef std::shared_ptr<DuplicateFileList> DuplicateFileList_SP;
 	typedef std::unique_ptr<DuplicateFileList> DuplicateFileList_UP;
 }

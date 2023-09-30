@@ -5,7 +5,7 @@
 
 using namespace SyncServ;
 
-uint CrcCalculator::CalculateCrc(const std::filesystem::path& file, const size_t bufferSize)
+uint CrcCalculator::CalculateCrc(const std::string& file, const size_t bufferSize)
 {
 	boost::crc_32_type cc;
 	std::ifstream input_fstream(file, std::ios_base::binary);
@@ -25,7 +25,7 @@ uint CrcCalculator::CalculateCrc(const std::filesystem::path& file, const size_t
 	return cc.checksum();
 }
 
-uint CrcCalculator::CalculateCrc(const std::filesystem::path& file)
+uint CrcCalculator::CalculateCrc(const std::string& file)
 {
 	return CalculateCrc(file, DefaultBufferSize);
 }

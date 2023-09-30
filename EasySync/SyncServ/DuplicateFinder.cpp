@@ -21,7 +21,7 @@ using namespace SyncServ;
 
 std::streamsize const buffer_size = PRIVATE_BUFFER_SIZE;
 
-DuplicateFinder::DuplicateFinder()
+DuplicateFinder::DuplicateFinder() : fsHelper(), crcCalculator()
 {
 }
 
@@ -29,7 +29,7 @@ DuplicateFinder::~DuplicateFinder()
 {
 }
 
-size_t DuplicateFinder::GenerateDuplicateList(DuplicateFileList& duplicateList, const std::string& dir)
+DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const std::string& dir)
 {
 	using namespace oneapi::tbb;
 
@@ -52,16 +52,18 @@ size_t DuplicateFinder::GenerateDuplicateList(DuplicateFileList& duplicateList, 
 
 	tskGrp.wait();
 
+	DuplicateFileList_SP duplicateList(new DuplicateFileList());
+
 	for (auto& item : list)
 	{
-		if (duplicateList.find(item->Crc) == duplicateList.end())
+		if (duplicateList->find(item->Crc) == duplicateList->end())
 		{
 			std::pair<uint, std::vector<FileInfo_SP>> pair = std::make_pair(item->Crc, std::vector<FileInfo_SP>());
-			duplicateList.insert(pair);
+			duplicateList->insert(pair);
 		}
 
-		duplicateList[item->Crc].push_back(item);
+		(*duplicateList)[item->Crc].push_back(item);
 	}
 
-	return duplicateList.size();
+	return duplicateList;
 }

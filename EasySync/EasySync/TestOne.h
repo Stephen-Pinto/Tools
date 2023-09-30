@@ -48,11 +48,10 @@ using namespace std::chrono;
 inline void TestMethodThree()
 {
     DuplicateFinder finder;
-    DuplicateFileList list;
-    size_t count = finder.GenerateDuplicateList(list, DIR_PATH);
+    auto list = finder.GenerateDuplicateList(DIR_PATH);
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-    for(auto & [key, val] : list)
+    for(auto & [key, val] : *list)
     {
         std::cout << "With CRC: " << key << ": [" << val.size() << "]" << std::endl;
 

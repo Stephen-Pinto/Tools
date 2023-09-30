@@ -15,7 +15,7 @@ namespace SyncServ
 		DuplicateFinder();
 		~DuplicateFinder();
 
-		size_t GenerateDuplicateList(DuplicateFileList& duplicateList, const std::string& dir);
+		DuplicateFileList_SP GenerateDuplicateList(const std::string& dir);
 	private:
 		FileSystemHelper fsHelper;
 		CrcCalculator crcCalculator;

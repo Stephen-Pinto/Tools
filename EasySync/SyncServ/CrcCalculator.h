@@ -9,8 +9,8 @@ namespace SyncServ
 	class CrcCalculator
 	{
 	public:
-		uint CalculateCrc(const std::filesystem::path& file);
-		uint CalculateCrc(const std::filesystem::path& file, const size_t bufferSize);
+		uint CalculateCrc(const std::string& file);
+		uint CalculateCrc(const std::string& file, const size_t bufferSize);
 	private:
 		size_t DefaultBufferSize;
 	};

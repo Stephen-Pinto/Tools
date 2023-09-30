@@ -141,8 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ComparisonUtils.h" />
     <ClInclude Include="DuplicateFileList.h" />
     <ClInclude Include="FileInfo.h" />
+    <ClInclude Include="SearchFilterInfo.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

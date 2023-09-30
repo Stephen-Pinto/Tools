@@ -16,7 +16,6 @@ namespace SyncServ
 		FileInfo_SP GenerateCrcForFile(const std::string& file);
 		void		GenerateCrcForFile(const FileInfo_SP& finfo);
 		std::vector<FileInfo_SP> GenerateCrcForDir(const std::string& dir);
-		//DuplicateFileList& GenerateDuplicateList(const std::string& dir);
 		size_t GenerateDuplicateList(DuplicateFileList& duplicateList, const std::string& dir);
 
 		std::vector<FileInfo_SP> GetFlatList(const std::filesystem::path& dir);

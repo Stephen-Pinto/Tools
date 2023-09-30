@@ -27,6 +27,12 @@
     <ClInclude Include="DuplicateFileList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SearchFilterInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComparisonUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SyncServ.cpp">

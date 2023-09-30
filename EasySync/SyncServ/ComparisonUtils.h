@@ -11,33 +11,44 @@ namespace SyncServ::Utils
 		
 	public:
 
-		bool wildcardMatch(char const* needle, char const* haystack)
+		bool WildcardMatch(const vector<string>& patterns, char const* str)
 		{
-			for (; *needle != '\0'; ++needle)
+			for (auto pattern : patterns)
 			{
-				switch (*needle)
+				if (WildcardMatch(pattern.c_str(), str))
+					return true;				
+			}
+
+			return false;
+		}
+
+		bool WildcardMatch(char const* pattern, char const* str)
+		{
+			for (; *pattern != '\0'; ++pattern)
+			{
+				switch (*pattern)
 				{
 				case '?':
-					if (*haystack == '\0')
+					if (*str == '\0')
 						return false;
-					++haystack;
+					++str;
 					break;
 				case '*': {
-					if (needle[1] == '\0')
+					if (pattern[1] == '\0')
 						return true;
-					size_t max = strlen(haystack);
+					size_t max = strlen(str);
 					for (size_t i = 0; i < max; i++)
-						if (wildcardMatch(needle + 1, haystack + i))
+						if (WildcardMatch(pattern + 1, str + i))
 							return true;
 					return false;
 				}
 				default:
-					if (toupper(*haystack) != toupper(*needle))
+					if (toupper(*str) != toupper(*pattern))
 						return false;
-					++haystack;
+					++str;
 				}
 			}
-			return *haystack == '\0';
+			return *str == '\0';
 		}
 	};
 }

@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #define NOMINMAX
 #endif // _WIN32
+
 #include "pch.h"
 #include "DuplicateFinder.h"
 #include <boost/filesystem.hpp>
@@ -31,13 +32,24 @@ DuplicateFinder::~DuplicateFinder()
 
 DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const std::string& dir)
 {
-	using namespace oneapi::tbb;
-
 	auto list = fsHelper.GetFlatList(dir);
+	return GetDuplicates(list);
+}
 
+DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const SearchFilterCriteria& criteria)
+{
+	auto list = fsHelper.GetFlatList(criteria);
+	return GetDuplicates(list);
+}
+
+DuplicateFileList_SP DuplicateFinder::GetDuplicates(const std::vector<FileInfo_SP>& fileList)
+{
+	AnalayzedFiles = fileList.size();
+
+	using namespace oneapi::tbb;
 	task_group tskGrp;
 
-	for (auto& item : list)
+	for (auto& item : fileList)
 	{
 		tskGrp.run([&]
 			{
@@ -47,6 +59,9 @@ DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const std::string& d
 					item->Crc = crcCalculator.CalculateCrc(item->Path, 512);
 				else
 					item->Crc = crcCalculator.CalculateCrc(item->Path, PRIVATE_BUFFER_SIZE);
+
+				//Increment counter which can be used for tracking progress
+				ProcessedFiles++;
 			});
 	}
 
@@ -54,7 +69,7 @@ DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const std::string& d
 
 	DuplicateFileList_SP duplicateList(new DuplicateFileList());
 
-	for (auto& item : list)
+	for (auto& item : fileList)
 	{
 		if (duplicateList->find(item->Crc) == duplicateList->end())
 		{

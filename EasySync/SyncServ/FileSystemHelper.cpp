@@ -39,6 +39,52 @@ std::vector<FileInfo_SP> FileSystemHelper::GetFlatList(const std::string path)
 	return fileList;
 }
 
+std::vector<FileInfo_SP> SyncServ::FileSystemHelper::GetFlatList(const SearchFilterCriteria& criteria)
+{
+	std::vector<FileInfo_SP> fileList;
+
+	ValidatePath(criteria.Path);
+
+	std::filesystem::recursive_directory_iterator end_iter;
+	std::filesystem::recursive_directory_iterator iter(criteria.Path);
+
+	while (iter != end_iter)
+	{
+		if (!is_directory(iter->path()) && exists(iter->path()))
+		{
+			try
+			{
+				FileInfo_SP finfo(new FileInfo());
+				auto& pathRef = iter->path();
+
+				if (!(
+						(criteria.HavingNames.size() > 0 
+						&& !comparer.WildcardMatch(criteria.HavingNames, pathRef.string().c_str()))
+						||
+						(criteria.NotHavingNames.size() > 0
+						&& comparer.WildcardMatch(criteria.NotHavingNames, pathRef.string().c_str()))
+					))
+				{
+					finfo->Path = pathRef.string();
+					finfo->Size = std::filesystem::file_size(finfo->Path);
+					finfo->Name = pathRef.stem().string();
+					finfo->Extension = pathRef.extension().string();
+					fileList.push_back(finfo);
+				}
+			}
+			catch (std::exception& exp)
+			{
+				std::cerr << "Exception: " << exp.what() << std::endl;
+			}
+		}
+
+		std::error_code err;
+		iter.increment(err);
+	}
+
+	return fileList;
+}
+
 FileInfo_SP FileSystemHelper::GetFileInfo(const std::string path)
 {
 	auto pathObj = std::filesystem::path(path);

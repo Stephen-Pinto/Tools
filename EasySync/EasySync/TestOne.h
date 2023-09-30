@@ -3,8 +3,6 @@
 #include "DuplicateFinder.h"
 #include <chrono>
 
-using namespace std::chrono;
-
 #ifndef  _TEST_ONE__
 #define _TEST_ONE__
 

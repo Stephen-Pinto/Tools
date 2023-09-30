@@ -27,7 +27,7 @@
     <ClInclude Include="DuplicateFileList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchFilterInfo.h">
+    <ClInclude Include="SearchFilterCriteria.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComparisonUtils.h">

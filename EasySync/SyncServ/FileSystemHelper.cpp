@@ -67,7 +67,7 @@ std::vector<FileInfo_SP> SyncServ::FileSystemHelper::GetFlatList(const SearchFil
 				{
 					finfo->Path = pathRef.string();
 					finfo->Size = std::filesystem::file_size(finfo->Path);
-					finfo->Name = pathRef.stem().string();
+					finfo->Name = pathRef.filename().string();
 					finfo->Extension = pathRef.extension().string();
 					fileList.push_back(finfo);
 				}

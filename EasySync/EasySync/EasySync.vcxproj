@@ -132,8 +132,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CmdProgram.cpp" />
     <ClCompile Include="EasySync.cpp" />
     <ClCompile Include="TestOne.h" />
+    <ClCompile Include="TimerUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SyncServ\SyncServ.vcxproj">
@@ -141,8 +143,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CmdProgram.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="TestTwo.h" />
+    <ClInclude Include="TimerUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,12 +21,24 @@
     <ClCompile Include="TestOne.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="CmdProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestTwo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CmdProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

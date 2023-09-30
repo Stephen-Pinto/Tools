@@ -1,12 +1,18 @@
 // EasySync.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include "pch.h"
-#include "TestTwo.h"
+//#include "TestTwo.h"
+#include "CmdProgram.h"
 
-int main()
+using namespace EasySync;
+
+int main(int argc, char** argv)
 {
+
+    CmdProgram prgm;
+    return prgm.Run(argc, argv);
     /*std::cout << "Hello World!\n";*/
-    TestTwo();
+    //TestTwo();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

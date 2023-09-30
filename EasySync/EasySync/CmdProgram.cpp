@@ -19,7 +19,7 @@ int CmdProgram::Run(int argc, char** argv)
 		("root,r", value<string>()->required(), "sets the root folder for sniffer")
 		("include,i", value<vector<string>>(), "look for specified files and directories only")
 		("exclude,e", value<vector<string>>(), "exclude specified files or directories")
-		("out", value<string>(), "set output file for results");
+		("out,o", value<string>(), "set output file for results");
 
 	variables_map vmap;
 
@@ -59,7 +59,7 @@ int CmdProgram::ExecuteTool(variables_map& vmap)
 		criteria.HavingNames = vmap["include"].as<vector<string>>();
 
 	if (vmap.count("exclude") > 0)
-		criteria.HavingNames = vmap["exclude"].as<vector<string>>();
+		criteria.NotHavingNames = vmap["exclude"].as<vector<string>>();
 
 	DuplicateFinder dupFinder;
 
@@ -101,19 +101,19 @@ int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
 	{
 		if (val.size() == 1)
 		{
-			cout << "File: " << val[0]->Path
+			*ostrm << "File: " << val[0]->Path
 				<< " Crc: " << val[0]->Crc
 				<< endl;
 		}
 		else
 		{
-			cout << "Crc: " << key << " :" << endl;
+			*ostrm << "Crc: " << key << " :" << endl;
 			for (auto item : val)
 			{
-				cout << "File: " << val[0]->Path
+				*ostrm << "File: " << val[0]->Path
 					<< endl;
 			}
-			cout << endl;
+			*ostrm << endl;
 		}
 	}
 

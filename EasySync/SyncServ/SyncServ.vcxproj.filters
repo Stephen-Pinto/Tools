@@ -33,6 +33,9 @@
     <ClInclude Include="ComparisonUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileSystemHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SyncServ.cpp">
@@ -41,10 +44,19 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CrcListGenerator.h">
+    <ClCompile Include="DuplicateFinder.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="CrcListGenerator.cpp">
+    <ClCompile Include="DuplicateFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CrcCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CrcCalculator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystemHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

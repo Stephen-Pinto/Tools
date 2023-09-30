@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Common.h"
-#include "CrcListGenerator.h"
+#include "DuplicateFinder.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 #ifndef  _TEST_ONE__
 #define _TEST_ONE__
@@ -26,27 +29,27 @@ using namespace std::chrono;
 //    std::cout << "Time elapsed: " << tm_duration << std::endl;
 //}
 
-inline void TestMethodTwo()
-{
-    CrcListGenerator gen;
-    auto list = gen.GenerateCrcForDir(DIR_PATH);
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-    for (auto item : list)
-    {
-        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
-    }
-
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-    auto tm_duration = duration_cast<microseconds>(t2 - t1).count();
-    std::cout << "Time elapsed: " << tm_duration << std::endl;
-}
+//inline void TestMethodTwo()
+//{
+//    CrcListGenerator gen;
+//    auto list = gen.GenerateCrcForDir(DIR_PATH);
+//    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+//
+//    for (auto item : list)
+//    {
+//        std::cout << item->Path << " __ CRC: __ " << item->Crc << std::endl;
+//    }
+//
+//    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+//    auto tm_duration = duration_cast<microseconds>(t2 - t1).count();
+//    std::cout << "Time elapsed: " << tm_duration << std::endl;
+//}
 
 inline void TestMethodThree()
 {
-    CrcListGenerator gen;
+    DuplicateFinder finder;
     DuplicateFileList list;
-    size_t count = gen.GenerateDuplicateList(list, DIR_PATH);
+    size_t count = finder.GenerateDuplicateList(list, DIR_PATH);
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     for(auto & [key, val] : list)
@@ -63,7 +66,7 @@ inline void TestMethodThree()
 
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
     auto tm_duration = duration_cast<microseconds>(t2 - t1).count();
-    std::cout << "Time elapsed: " << tm_duration << std::endl;
+    std::cout << "Time elapsed: " << tm_duration * 1e-6 << " secs" << std::endl;
 }
 
 #endif // ! _TEST_ONE__

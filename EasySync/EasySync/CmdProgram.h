@@ -13,8 +13,9 @@ namespace EasySync
 	public:
 		int Run(int argc, char** argv);
 	private:
-		int ExecuteTool(boost::program_options::variables_map& vmap);
-		int PrintList(boost::program_options::variables_map& vmap, SyncServ::DuplicateFileList_SP list);
-		std::vector<std::string> SplitList(std::string arg);
+		int ExecuteTool(const boost::program_options::variables_map& vmap);
+		int PrintList(const boost::program_options::variables_map& vmap, const SyncServ::DuplicateFileList_SP& list);
+		int ExtractFiles(const boost::program_options::variables_map& vmap, const SyncServ::DuplicateFileList_SP& list);
+		std::vector<std::string> SplitList(const std::string& arg);
 	};
 }

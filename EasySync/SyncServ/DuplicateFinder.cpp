@@ -17,7 +17,7 @@ using namespace SyncServ;
 #define AS_SIZE(x) (size_t) x
 
 #ifndef PRIVATE_BUFFER_SIZE
-#define PRIVATE_BUFFER_SIZE  2048
+#define PRIVATE_BUFFER_SIZE  1024
 #endif
 
 std::streamsize const buffer_size = PRIVATE_BUFFER_SIZE;

@@ -21,8 +21,9 @@ int CmdProgram::Run(int argc, char** argv)
 		("version,v", "Prints version string.")
 		("root,r", value<string>()->required(), "Sets the root folder for sniffer.")
 		("include,i", value<string>(), "Look for specified files and directories only. Split multiple values with '|'.")
-		("exclude,e", value<string>(), "Exclude specified files or directories. Split multiple values with '|'.")
-		("out,o", value<string>(), "Set output file for results.");
+		("exclude,x", value<string>(), "Exclude specified files or directories. Split multiple values with '|'.")
+		("out,o", value<string>(), "Set output file for results.")
+		("extract,e", value<string>(), "Move unique copies to specified directory without duplicates");
 
 	variables_map vmap;
 
@@ -59,7 +60,7 @@ int CmdProgram::Run(int argc, char** argv)
 	return exitCode;
 }
 
-int CmdProgram::ExecuteTool(variables_map& vmap)
+int CmdProgram::ExecuteTool(const variables_map& vmap)
 {
 	SearchFilterCriteria criteria;
 	criteria.Path = vmap["root"].as<string>();
@@ -119,10 +120,12 @@ int CmdProgram::ExecuteTool(variables_map& vmap)
 		<< timer.ElapsedSeconds() << " seconds"
 		<< " to index " << dupFinder.ProcessedFiles << " files" << endl;
 
+	if (vmap.count("extract"))
+		return ExtractFiles(vmap, duplicates);
 	return PrintList(vmap, duplicates);
 }
 
-int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
+int CmdProgram::PrintList(const variables_map& vmap, const DuplicateFileList_SP& list)
 {
 	ostream* ostrm = nullptr;
 	ofstream* ofstrm = nullptr;
@@ -172,7 +175,31 @@ int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
 	return EXIT_SUCCESS;
 }
 
-vector<string> CmdProgram::SplitList(string arg)
+int CmdProgram::ExtractFiles(const variables_map& vmap, const DuplicateFileList_SP& list)
+{
+	if (!vmap.count("extract"))
+	{
+		cerr << "No proper extraction directory provided" << endl;
+		return EXIT_FAILURE;
+	}
+
+	string path = vmap["extract"].as<string>();
+
+	filesystem::create_directories(path);
+
+	for (auto& [key, val] : *list)
+	{
+		//Copy only first versions of each file
+		filesystem::copy_file(
+			val[0]->Path,
+			path + "\\" + val[0]->Name,
+			filesystem::copy_options::overwrite_existing);
+	}
+
+	return EXIT_SUCCESS;
+}
+
+vector<string> CmdProgram::SplitList(const string& arg)
 {
 	vector<string> list;
 	if (arg == "")
@@ -185,30 +212,4 @@ vector<string> CmdProgram::SplitList(string arg)
 		list.push_back(val);
 
 	return list;
-}
-
-void PrintFiles(variables_map& vmap, const vector<FileInfo_SP>& flatIndex)
-{
-	ofstream ostrm;
-
-	if (vmap.count("out"))
-	{
-		string outfile = vmap["out"].as<string>();
-		ostrm.open(outfile);
-	}
-
-	for (auto const& item : flatIndex)
-	{
-		if (!ostrm.is_open())
-			cout << item->Path << endl;
-		else
-			ostrm << item->Path << endl;
-	}
-
-	if (ostrm.is_open())
-	{
-		ostrm.flush();
-		ostrm.close();
-		cout << "Successfully wrote to file";
-	}
 }

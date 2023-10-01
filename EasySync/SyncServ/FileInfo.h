@@ -3,18 +3,19 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "LocalTypes.h"
 
 namespace SyncServ
 {
 	struct FileInfo
 	{
 	public:
-		unsigned int Crc = 0;
+		uint Crc = 0;
 
 		std::string Name;
 		std::string Path;
 		std::string Extension;
-		size_t Size = 0;
+		ullong Size = 0;
 
 		bool operator ==(const FileInfo& item)
 		{
@@ -28,6 +29,5 @@ namespace SyncServ
 	};
 
 	typedef std::shared_ptr<FileInfo> FileInfo_SP;
-	typedef std::unique_ptr<FileInfo> FileInfo_UP;
-	typedef unsigned int uint;
+	typedef std::unique_ptr<FileInfo> FileInfo_UP;	
 }

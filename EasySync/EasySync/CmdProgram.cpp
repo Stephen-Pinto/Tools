@@ -4,7 +4,10 @@
 #include "CmdProgram.h"
 #include "FileInfo.h"
 #include "DuplicateFinder.h"
+#include <boost/thread.hpp>
+#include <boost/chrono.hpp>
 
+using namespace boost::chrono;
 using namespace boost::program_options;
 using namespace std;
 using namespace SyncServ;
@@ -67,13 +70,30 @@ int CmdProgram::ExecuteTool(variables_map& vmap)
 	if (vmap.count("exclude") > 0)
 		criteria.NotHavingNames = SplitList(vmap["exclude"].as<string>());
 
-	DuplicateFinder dupFinder;
+	DuplicateFinder dupFinder(criteria);
 
 	//Building index
 	TimerUtil timer;
 	timer.Start();
 
-	auto duplicates = dupFinder.GenerateDuplicateList(criteria);
+	boost::thread t{ 
+		[&] 
+		{
+			while(dupFinder.AnalayzedFiles == 0)
+				boost::this_thread::sleep_for(milliseconds{ 100 });
+
+			ldouble perc;
+
+			while (dupFinder.AnalayzedSize > dupFinder.ProcessedSize)
+			{
+				perc = (ldouble)dupFinder.ProcessedSize / (ldouble)dupFinder.AnalayzedSize;
+				cout << "Completed: " << (int)(perc * 100) << "%" << endl;
+				boost::this_thread::sleep_for(milliseconds{ 100 });
+			}
+		} 
+	};
+
+	auto duplicates = dupFinder.GetDuplicates();
 
 	timer.Stop();
 
@@ -107,7 +127,7 @@ int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
 	{
 		if (val.size() == 1)
 		{
-			*ostrm << "File: " << val[0]->Path
+			*ostrm << "File: " << val[0]->Name
 				<< " Crc: " << val[0]->Crc
 				<< endl;
 		}
@@ -116,7 +136,7 @@ int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
 			*ostrm << "Crc: " << key << " :" << endl;
 			for (auto item : val)
 			{
-				*ostrm << "File: " << val[0]->Path
+				*ostrm << "File: " << val[0]->Name
 					<< endl;
 			}
 			*ostrm << endl;

@@ -22,30 +22,26 @@ using namespace SyncServ;
 
 std::streamsize const buffer_size = PRIVATE_BUFFER_SIZE;
 
-DuplicateFinder::DuplicateFinder() : fsHelper(), crcCalculator()
+DuplicateFinder::DuplicateFinder(SearchFilterCriteria& criteria) : searchCriteria(criteria), fsHelper(), crcCalculator()
 {
+	AnalayzedFiles = 0;
+	AnalayzedSize = 0;
+	ProcessedFiles = 0;
+	ProcessedSize = 0;
 }
 
 DuplicateFinder::~DuplicateFinder()
 {
 }
 
-DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const std::string& dir)
+DuplicateFileList_SP DuplicateFinder::GetDuplicates()
 {
-	auto list = fsHelper.GetFlatList(dir);
-	return GetDuplicates(list);
-}
+	auto fileList = fsHelper.GetFlatList(searchCriteria);
 
-DuplicateFileList_SP DuplicateFinder::GenerateDuplicateList(const SearchFilterCriteria& criteria)
-{
-	auto list = fsHelper.GetFlatList(criteria);
-	return GetDuplicates(list);
-}
-
-DuplicateFileList_SP DuplicateFinder::GetDuplicates(const std::vector<FileInfo_SP>& fileList)
-{
 	AnalayzedFiles = fileList.size();
-
+	for (auto& item : fileList)
+		AnalayzedSize += item->Size;
+	
 	using namespace oneapi::tbb;
 	task_group tskGrp;
 
@@ -60,8 +56,9 @@ DuplicateFileList_SP DuplicateFinder::GetDuplicates(const std::vector<FileInfo_S
 				else
 					item->Crc = crcCalculator.CalculateCrc(item->Path, PRIVATE_BUFFER_SIZE);
 
-				//Increment counter which can be used for tracking progress
+				//Increment counters which can be used for tracking progress
 				ProcessedFiles++;
+				ProcessedSize += item->Size;
 			});
 	}
 

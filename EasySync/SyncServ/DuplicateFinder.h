@@ -12,19 +12,19 @@ namespace SyncServ
 	class DuplicateFinder
 	{
 	public:
-		DuplicateFinder();
+		DuplicateFinder(SearchFilterCriteria& criteria);
 		~DuplicateFinder();
 
-		DuplicateFileList_SP GenerateDuplicateList(const std::string& dir);
-		DuplicateFileList_SP GenerateDuplicateList(const SearchFilterCriteria& criteria);
+		DuplicateFileList_SP GetDuplicates();
 
 		std::atomic_size_t ProcessedFiles;
+		std::atomic_ullong ProcessedSize;
 		std::size_t AnalayzedFiles;
+		ullong AnalayzedSize;
 
 	private:
 		FileSystemHelper fsHelper;
 		CrcCalculator crcCalculator;
-
-		DuplicateFileList_SP GetDuplicates(const std::vector<FileInfo_SP>& fileList);
+		const SearchFilterCriteria& searchCriteria;
 	};
 }

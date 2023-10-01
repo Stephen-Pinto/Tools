@@ -12,14 +12,14 @@ using namespace EasySync;
 
 int CmdProgram::Run(int argc, char** argv)
 {
-	options_description options("Duplicate sniffer options");
+	options_description options("Duplicate sniffer options.");
 	options.add_options()
-		("help", "produces this help document")
-		("version,v", "prints version string")
-		("root,r", value<string>()->required(), "sets the root folder for sniffer")
-		("include,i", value<vector<string>>(), "look for specified files and directories only")
-		("exclude,e", value<vector<string>>(), "exclude specified files or directories")
-		("out,o", value<string>(), "set output file for results");
+		("help", "Produces this help document.")
+		("version,v", "Prints version string.")
+		("root,r", value<string>()->required(), "Sets the root folder for sniffer.")
+		("include,i", value<string>(), "Look for specified files and directories only. Split multiple values with '|'.")
+		("exclude,e", value<string>(), "Exclude specified files or directories. Split multiple values with '|'.")
+		("out,o", value<string>(), "Set output file for results.");
 
 	variables_map vmap;
 
@@ -42,6 +42,12 @@ int CmdProgram::Run(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
+	if (vmap.count("version"))
+	{
+		cout << "Version: 0.95 (alpha)";
+		return EXIT_SUCCESS;
+	}
+
 	//If all is ok then execute the tool
 	auto exitCode = ExecuteTool(vmap);
 
@@ -56,10 +62,10 @@ int CmdProgram::ExecuteTool(variables_map& vmap)
 	criteria.Path = vmap["root"].as<string>();
 
 	if (vmap.count("include") > 0)
-		criteria.HavingNames = vmap["include"].as<vector<string>>();
+		criteria.HavingNames = SplitList(vmap["include"].as<string>());
 
 	if (vmap.count("exclude") > 0)
-		criteria.NotHavingNames = vmap["exclude"].as<vector<string>>();
+		criteria.NotHavingNames = SplitList(vmap["exclude"].as<string>());
 
 	DuplicateFinder dupFinder;
 
@@ -119,11 +125,28 @@ int CmdProgram::PrintList(variables_map& vmap, DuplicateFileList_SP list)
 
 	if (ofstrm != nullptr)
 	{
+		ofstrm->flush();
 		ofstrm->close();
 		delete(ofstrm);
+		cout << "Wrote to file successfully" << endl;
 	}
 
 	return EXIT_SUCCESS;
+}
+
+vector<string> CmdProgram::SplitList(string arg)
+{
+	vector<string> list;
+	if (arg == "")
+		return list;
+
+	istringstream strm(arg);
+	string val;	
+	
+	while (getline(strm, val, '|'))
+		list.push_back(val);
+	
+	return list;
 }
 
 void PrintFiles(variables_map& vmap, const vector<FileInfo_SP>& flatIndex)

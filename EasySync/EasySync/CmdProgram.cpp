@@ -1,13 +1,13 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include "TimerUtil.h"
 #include "CmdProgram.h"
 #include "FileInfo.h"
 #include "DuplicateFinder.h"
+#include "progressbar.hpp"
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 
-using namespace boost::chrono;
 using namespace boost::program_options;
 using namespace std;
 using namespace SyncServ;
@@ -76,28 +76,46 @@ int CmdProgram::ExecuteTool(variables_map& vmap)
 	TimerUtil timer;
 	timer.Start();
 
-	boost::thread t{ 
-		[&] 
-		{
-			while(dupFinder.AnalayzedFiles == 0)
-				boost::this_thread::sleep_for(milliseconds{ 100 });
+	cout << "Starting indexing files" << endl;
 
-			ldouble perc;
+	boost::thread t{
+		[&]
+		{
+			cout << endl;
+
+			while (dupFinder.AnalayzedFiles == 0)
+				boost::this_thread::sleep_for(boost::chrono::milliseconds{ 100 });
+
+			ldouble perc = 0.0;
+			int lastPerc = 0;
+			int curPerc = 0;
+			progressbar bar(100);
 
 			while (dupFinder.AnalayzedSize > dupFinder.ProcessedSize)
 			{
 				perc = (ldouble)dupFinder.ProcessedSize / (ldouble)dupFinder.AnalayzedSize;
-				cout << "Completed: " << (int)(perc * 100) << "%" << endl;
-				boost::this_thread::sleep_for(milliseconds{ 100 });
+				curPerc = (int)(perc * 100);
+
+				for (int i = 0; i < curPerc - lastPerc; i++)
+					bar.update();
+
+				lastPerc = curPerc;
+				boost::this_thread::sleep_for(boost::chrono::milliseconds{ 50 });
 			}
-		} 
+
+			for (int i = 0; i < 100 - lastPerc; i++)
+				bar.update();
+
+			cout << endl;
+		}
 	};
 
 	auto duplicates = dupFinder.GetDuplicates();
 
 	timer.Stop();
+	t.join();
 
-	cout << "Took "
+	cout << endl << "Took "
 		<< timer.ElapsedSeconds() << " seconds"
 		<< " to index " << dupFinder.ProcessedFiles << " files" << endl;
 
@@ -161,11 +179,11 @@ vector<string> CmdProgram::SplitList(string arg)
 		return list;
 
 	istringstream strm(arg);
-	string val;	
-	
+	string val;
+
 	while (getline(strm, val, '|'))
 		list.push_back(val);
-	
+
 	return list;
 }
 

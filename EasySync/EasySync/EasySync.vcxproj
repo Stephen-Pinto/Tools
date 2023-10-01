@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="CmdProgram.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="progressbar.hpp" />
     <ClInclude Include="TestTwo.h" />
     <ClInclude Include="TimerUtil.h" />
   </ItemGroup>

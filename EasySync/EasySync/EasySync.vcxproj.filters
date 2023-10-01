@@ -41,5 +41,8 @@
     <ClInclude Include="TimerUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="progressbar.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

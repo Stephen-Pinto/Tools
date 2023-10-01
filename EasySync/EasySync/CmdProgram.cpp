@@ -77,13 +77,11 @@ int CmdProgram::ExecuteTool(const variables_map& vmap)
 	TimerUtil timer;
 	timer.Start();
 
-	cout << "Starting indexing files" << endl;
+	cout << "Indexing files" << endl;
 
 	boost::thread t{
 		[&]
 		{
-			cout << endl;
-
 			while (dupFinder.AnalayzedFiles == 0)
 				boost::this_thread::sleep_for(boost::chrono::milliseconds{ 100 });
 
@@ -116,9 +114,9 @@ int CmdProgram::ExecuteTool(const variables_map& vmap)
 	timer.Stop();
 	t.join();
 
-	cout << endl << "Took "
+	cout << endl << "Indexing Complete. Took "
 		<< timer.ElapsedSeconds() << " seconds"
-		<< " to index " << dupFinder.ProcessedFiles << " files" << endl;
+		<< " to index " << dupFinder.ProcessedFiles << " files" << endl << endl;
 
 	if (vmap.count("extract"))
 		return ExtractFiles(vmap, duplicates);
@@ -184,8 +182,13 @@ int CmdProgram::ExtractFiles(const variables_map& vmap, const DuplicateFileList_
 	}
 
 	string path = vmap["extract"].as<string>();
+	cout << "Extracting files to " << path << endl;
 
 	filesystem::create_directories(path);
+
+	progressbar bar(list->size());
+	TimerUtil timer;
+	timer.Start();
 
 	for (auto& [key, val] : *list)
 	{
@@ -194,7 +197,14 @@ int CmdProgram::ExtractFiles(const variables_map& vmap, const DuplicateFileList_
 			val[0]->Path,
 			path + "\\" + val[0]->Name,
 			filesystem::copy_options::overwrite_existing);
+
+		bar.update();
 	}
+
+	timer.Stop();
+	cout << endl << endl << "Extraction complete. Took "
+		<< timer.ElapsedSeconds() << " seconds"
+		<< " to copy " << list->size() << " files" << endl << endl;
 
 	return EXIT_SUCCESS;
 }

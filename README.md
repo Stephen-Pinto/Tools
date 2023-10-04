@@ -1,6 +1,9 @@
 # Tools
 Basic tools for day to day activities
 
+## EasySync
+A simple sync application to find duplicates and figure a way to upload to cloud. Next step will be to develop a sqlite db and then store sync status and the upload new files.
+
 ## DuplicateSniffer
 Its a simple tool created to figure out all the duplicates within a root folder. This will check the packages using CRC to ensure that the file contents too are exactly the same before listing it.
 Pretty useful for duplicate photos or just any files.
